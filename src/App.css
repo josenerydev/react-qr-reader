@@ -1,38 +1,98 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
+}
+
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  width: 100%;
+  max-width: 480px; 
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+h1 {
+  color: #333;
+  font-size: 26px;  /* Tamanho de fonte ligeiramente maior */
+  margin-bottom: 20px;
+}
+
+.qr-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.App-link {
-  color: #61dafb;
+.qr-status {
+  color: #666;
+  margin-bottom: 25px;  /* Maior espaçamento */
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.qr-scanned {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.qr-button {
+  color: #fff;
+  background-color: #007BFF;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 25px;  /* Aumento do padding */
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 18px;  /* Tamanho de fonte maior */
+}
+
+.qr-button:hover {
+  background-color: #0056b3;
+}
+
+.qr-scanner-container {
+  position: relative;
+  width: 320px;
+  height: 240px;
+  margin: 0 auto;
+}
+
+@media (max-width: 480px) {
+  .qr-scanner-container {
+      width: 90vw; 
+      height: calc(90vw * 0.75); 
   }
-  to {
-    transform: rotate(360deg);
+  h1 {
+    font-size: 24px;  /* Menor tamanho de fonte para telas estreitas */
   }
+}
+
+.qr-overlay {
+  border: 8px solid rgba(255, 255, 255, 0.7);
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%, -50%);
 }

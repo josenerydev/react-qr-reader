@@ -12,7 +12,8 @@
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-scripts": "5.0.1",
     "react-webcam": "^7.1.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "workbox-webpack-plugin": "^7.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

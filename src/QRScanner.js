@@ -1,33 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import QrScanner from 'react-qr-scanner';
 
-class QRScanner extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            result: '',
-            scanned: false,
-            facingMode: 'environment',  // Default to the back camera
-        };
+function QRScanner() {
+    const [result, setResult] = useState('');
+    const [scanned, setScanned] = useState(false);
+    const [facingMode, setFacingMode] = useState('environment');
+    const [isLoading, setIsLoading] = useState(true);
 
-        this.handleScan = this.handleScan.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.toggleCamera = this.toggleCamera.bind(this);
-        this.handleError = this.handleError.bind(this);
-    }
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 2000); // 2 segundos
 
-    handleScan(data) {
+        return () => clearTimeout(timer);
+    }, []);
+
+    const handleScan = data => {
         if (data) {
-            this.setState({
-                result: data.text,
-                scanned: true
-            });
+            setResult(data.text);
+            setScanned(true);
         }
-    }
+    };
 
-    async handleSubmit() {
-        const { result } = this.state;
-
+    const handleSubmit = async () => {
         try {
             const response = await fetch('https://localhost:5001/WeatherForecast/send', {
                 method: 'POST',
@@ -39,47 +34,48 @@ class QRScanner extends React.Component {
 
             if (response.ok) {
                 window.alert("Dados enviados com sucesso");
+                setScanned(false);
+                setResult('');
             } else {
                 window.alert("Erro ao enviar os dados: " + response.statusText);
             }
         } catch (error) {
             window.alert("Erro ao enviar os dados: " + error.message);
         }
-    }
+    };
 
-    handleError(err) {
+    const handleError = err => {
         window.alert("Erro ao escanear: " + err.message);
-    }
+    };
 
-    toggleCamera() {
-        this.setState(prevState => ({
-            facingMode: prevState.facingMode === 'environment' ? 'user' : 'environment'
-        }));
-    }
+    const toggleCamera = () => {
+        setFacingMode(prevMode => prevMode === 'environment' ? 'user' : 'environment');
+    };
 
-    render() {
-        const { scanned, result, facingMode } = this.state;
+    return (
+        <div className="qr-wrapper">
+            {isLoading ? <p className="qr-status">Carregando componente...</p> :
+                !scanned && <p className="qr-status">Aguarde a leitura do QR Code...</p>}
 
-        return (
-            <div>
-                {!scanned && <p>Componente QRScanner está sendo renderizado!</p>}
+            <div className="qr-scanner-container">
                 <QrScanner
                     delay={300}
-                    onError={this.handleError}
-                    onScan={this.handleScan}
-                    style={{ height: 240, width: 320 }}
+                    onError={handleError}
+                    onScan={handleScan}
+                    style={{ width: '100%', height: '100%' }}
                     constraints={{ video: { facingMode } }}
                 />
-                <button onClick={this.toggleCamera}>Trocar Câmera</button>
-                {scanned && (
-                    <div>
-                        <p>{result}</p>
-                        <button onClick={this.handleSubmit}>Enviar</button>
-                    </div>
-                )}
+                <div className="qr-overlay"></div>
             </div>
-        );
-    }
+            <button className="qr-button" onClick={toggleCamera}>Trocar Câmera</button>
+            {scanned && (
+                <div className="qr-scanned">
+                    <p>{result}</p>
+                    <button className="qr-button" onClick={handleSubmit}>Enviar</button>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default QRScanner;

@@ -6,7 +6,7 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <h1>Leitor de QR Code com React</h1>
+                <h1>Leitor de QR Code NFC-e</h1>
                 <QRScanner />
             </header>
         </div>
