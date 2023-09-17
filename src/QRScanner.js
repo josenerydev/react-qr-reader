@@ -7,10 +7,13 @@ class QRScanner extends React.Component {
         this.state = {
             result: '',
             scanned: false,
+            facingMode: 'environment',  // Default to the back camera
         };
 
         this.handleScan = this.handleScan.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.toggleCamera = this.toggleCamera.bind(this);
+        this.handleError = this.handleError.bind(this);
     }
 
     handleScan(data) {
@@ -35,21 +38,27 @@ class QRScanner extends React.Component {
             });
 
             if (response.ok) {
-                console.log("Dados enviados com sucesso");
+                window.alert("Dados enviados com sucesso");
             } else {
-                console.error("Erro ao enviar os dados", response);
+                window.alert("Erro ao enviar os dados: " + response.statusText);
             }
         } catch (error) {
-            console.error("Erro ao enviar os dados", error);
+            window.alert("Erro ao enviar os dados: " + error.message);
         }
     }
 
     handleError(err) {
-        console.error(err);
+        window.alert("Erro ao escanear: " + err.message);
+    }
+
+    toggleCamera() {
+        this.setState(prevState => ({
+            facingMode: prevState.facingMode === 'environment' ? 'user' : 'environment'
+        }));
     }
 
     render() {
-        const { scanned, result } = this.state;
+        const { scanned, result, facingMode } = this.state;
 
         return (
             <div>
@@ -59,8 +68,9 @@ class QRScanner extends React.Component {
                     onError={this.handleError}
                     onScan={this.handleScan}
                     style={{ height: 240, width: 320 }}
-                    facingMode={{ exact: "environment" }}
+                    constraints={{ video: { facingMode } }}
                 />
+                <button onClick={this.toggleCamera}>Trocar Câmera</button>
                 {scanned && (
                     <div>
                         <p>{result}</p>
