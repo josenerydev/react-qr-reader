@@ -2,8 +2,23 @@ import React, { useState } from 'react';
 
 function LinkSubmitter() {
     const [link, setLink] = useState('');
+    const [message, setMessage] = useState(null);
+
+    const containsQrCode = (link) => {
+        return link.includes('qrcode');
+    }
 
     const handleSubmit = async () => {
+        if (!link.trim()) {
+            setMessage("Por favor, insira um link.");
+            return;
+        }
+
+        if (!containsQrCode(link)) {
+            setMessage("O link inserido não é válido.");
+            return;
+        }
+
         try {
             const response = await fetch('https://api.dotnery.com/QrCode/send', {
                 method: 'POST',
@@ -14,13 +29,13 @@ function LinkSubmitter() {
             });
 
             if (response.ok) {
-                window.alert("Dados enviados com sucesso");
+                setMessage("Dados enviados com sucesso");
                 setLink('');
             } else {
-                window.alert("Erro ao enviar os dados: " + response.statusText);
+                setMessage("Erro ao enviar os dados: " + response.statusText);
             }
         } catch (error) {
-            window.alert("Erro ao enviar os dados: " + error.message);
+            setMessage("Erro ao enviar os dados: " + error.message);
         }
     };
 
@@ -33,6 +48,7 @@ function LinkSubmitter() {
                 onChange={e => setLink(e.target.value)}
             />
             <button className="link-button" onClick={handleSubmit}>Enviar</button>
+            {message && <div className="message">{message}</div>}
         </div>
     );
 }

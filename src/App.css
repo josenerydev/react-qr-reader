@@ -1,7 +1,17 @@
-body {
-  font-family: 'Arial', sans-serif;
+/* Reset básico e definição de box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  font-family: 'Arial', sans-serif;
   background-color: #f7f7f7;
 }
 
@@ -12,14 +22,15 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100%; /* Garante que o contêiner ocupe toda a largura da tela */
 }
 
 .App-header {
   width: 100%;
-  max-width: 480px; 
+  max-width: 95vw; /* Ajustado para 95% da largura da viewport */
   padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -35,7 +46,6 @@ h1 {
   align-items: center;
   width: 100%;
   padding: 20px;
-  box-sizing: border-box;
 }
 
 .link-button {
@@ -61,11 +71,15 @@ input[type="text"] {
   border-radius: 5px;
   font-size: 16px;
   margin-bottom: 20px;
-  box-sizing: border-box;
 }
 
 @media (max-width: 480px) {
   h1 {
     font-size: 24px;
   }
+}
+
+.message {
+  margin-top: 20px;
+  color: red;
 }
