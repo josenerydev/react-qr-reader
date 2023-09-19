@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaste } from '@fortawesome/free-solid-svg-icons';
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 function LinkSubmitter() {
     const [link, setLink] = useState('');
-    const [message, setMessage] = useState(null);
 
     const containsQrCode = (link) => {
         return link.includes('qrcode');
@@ -17,17 +19,18 @@ function LinkSubmitter() {
             })
             .catch(err => {
                 console.error('Erro ao colar o texto: ', err);
+                toast.error('Erro ao colar o texto.');
             });
     }
 
     const handleSubmit = async () => {
         if (!link.trim()) {
-            setMessage("Por favor, insira um link.");
+            toast.warn("Por favor, insira um link.");
             return;
         }
 
         if (!containsQrCode(link)) {
-            setMessage("O link inserido não é válido.");
+            toast.warn("O link inserido não é válido.");
             return;
         }
 
@@ -41,13 +44,13 @@ function LinkSubmitter() {
             });
 
             if (response.ok) {
-                setMessage("Dados enviados com sucesso");
+                toast.success("Dados enviados com sucesso");
                 setLink('');
             } else {
-                setMessage("Erro ao enviar os dados: " + response.statusText);
+                toast.error("Erro ao enviar os dados: " + response.statusText);
             }
         } catch (error) {
-            setMessage("Erro ao enviar os dados: " + error.message);
+            toast.error("Erro ao enviar os dados: " + error.message);
         }
     };
 
@@ -65,7 +68,7 @@ function LinkSubmitter() {
                 </button>
                 <button className="link-button" onClick={handleSubmit}>Enviar</button>
             </div>
-            {message && <div className="message">{message}</div>}
+            <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
 }
