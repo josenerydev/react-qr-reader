@@ -7,33 +7,55 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function LinkSubmitter() {
     const [link, setLink] = useState('');
+    const [toastIds, setToastIds] = useState({
+        error: null,
+        warn: null,
+        success: null
+    });
 
     const containsQrCode = (link) => {
         return link.includes('qrcode');
     }
 
     const handlePaste = () => {
-        navigator.clipboard.readText()
-            .then(text => {
-                setLink(text);
-            })
-            .catch(err => {
-                console.error('Erro ao colar o texto: ', err);
-                toast.error('Erro ao colar o texto.');
-            });
+        if (!toast.isActive(toastIds.error)) {
+            navigator.clipboard.readText()
+                .then(text => {
+                    setLink(text);
+                })
+                .catch(err => {
+                    if (err.name === 'NotAllowedError') {
+                        const id = toast.error('Por favor, permita o acesso à área de transferência.');
+                        setToastIds(prev => ({ ...prev, error: id }));
+                    } else {
+                        console.error('Erro ao colar o texto: ', err);
+                        const id = toast.error('Erro ao acessar a área de transferência.');
+                        setToastIds(prev => ({ ...prev, error: id }));
+                    }
+                });
+        }
     }
 
     const handleSubmit = async () => {
+        // Se o link está vazio e o aviso não foi mostrado recentemente:
         if (!link.trim()) {
-            toast.warn("Por favor, insira um link.");
-            return;
+            if (!toast.isActive(toastIds.warn)) {
+                const id = toast.warn("Por favor, insira um link.");
+                setToastIds(prev => ({ ...prev, warn: id }));
+            }
+            return; // Pare a execução aqui para não enviar os dados.
         }
 
+        // Se o link não contém 'qrcode' e o aviso não foi mostrado recentemente:
         if (!containsQrCode(link)) {
-            toast.warn("O link inserido não é válido.");
-            return;
+            if (!toast.isActive(toastIds.warn)) {
+                const id = toast.warn("O link inserido não é válido.");
+                setToastIds(prev => ({ ...prev, warn: id }));
+            }
+            return; // Pare a execução aqui para não enviar os dados.
         }
 
+        // Se chegou aqui, tente enviar os dados:
         try {
             const response = await fetch('https://api.dotnery.com/QrCode/send', {
                 method: 'POST',
@@ -43,14 +65,19 @@ function LinkSubmitter() {
                 body: JSON.stringify({ link: link })
             });
 
-            if (response.ok) {
-                toast.success("Dados enviados com sucesso");
+            if (response.ok && !toast.isActive(toastIds.success)) {
+                const id = toast.success("Dados enviados com sucesso");
+                setToastIds(prev => ({ ...prev, success: id }));
                 setLink('');
-            } else {
-                toast.error("Erro ao enviar os dados: " + response.statusText);
+            } else if (!toast.isActive(toastIds.error)) {
+                const id = toast.error("Erro ao enviar os dados: " + response.statusText);
+                setToastIds(prev => ({ ...prev, error: id }));
             }
         } catch (error) {
-            toast.error("Erro ao enviar os dados: " + error.message);
+            if (!toast.isActive(toastIds.error)) {
+                const id = toast.error("Erro ao enviar os dados: " + error.message);
+                setToastIds(prev => ({ ...prev, error: id }));
+            }
         }
     };
 
