@@ -7,12 +7,25 @@
   padding: 0;
 }
 
-html,
-body {
+html, body {
   overflow: hidden;
   height: 100%;
   font-family: 'Arial', sans-serif;
   background-color: #f7f7f7;
+}
+
+button {
+  margin-right: 10px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #e6e6e6;
 }
 
 .App {
@@ -22,12 +35,12 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 100%; /* Garante que o contêiner ocupe toda a largura da tela */
+  width: 100%;
 }
 
 .App-header {
   width: 100%;
-  max-width: 95vw; /* Ajustado para 95% da largura da viewport */
+  max-width: 95vw;
   padding: 20px;
   background-color: #fff;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -48,22 +61,6 @@ h1 {
   padding: 20px;
 }
 
-.link-button {
-  color: #fff;
-  background-color: #007BFF;
-  border: none;
-  border-radius: 5px;
-  padding: 12px 25px;
-  margin-top: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 18px;
-}
-
-.link-button:hover {
-  background-color: #0056b3;
-}
-
 input[type="text"] {
   width: 100%;
   padding: 12px 15px;
@@ -73,13 +70,58 @@ input[type="text"] {
   margin-bottom: 20px;
 }
 
-@media (max-width: 480px) {
-  h1 {
-    font-size: 24px;
-  }
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+}
+
+.link-button, .paste-button {
+  flex: 1;
+  padding: 12px 15px;
+  font-size: 18px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link-button {
+  color: #fff;
+  background-color: #007BFF;
+}
+
+.link-button:hover {
+  background-color: #0056b3;
+}
+
+.paste-button {
+  color: #fff;
+  background-color: #6C757D;
+}
+
+.paste-button:hover {
+  background-color: #5a6268;
+}
+
+.paste-button .fa-paste {
+  margin-right: 8px;
 }
 
 .message {
   margin-top: 20px;
   color: red;
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 24px;
+  }
+
+  .link-button, .paste-button {
+    font-size: 16px;
+    padding: 10px 12px;
+  }
 }
