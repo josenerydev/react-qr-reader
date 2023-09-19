@@ -24,7 +24,7 @@ function QRScanner() {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('https://localhost:5001/WeatherForecast/send', {
+            const response = await fetch('https://api.dotnery.com/QrCode/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
