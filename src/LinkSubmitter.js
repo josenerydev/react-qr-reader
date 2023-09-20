@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function LinkSubmitter() {
     const [link, setLink] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Novo estado para monitorar a requisição
     const [toastIds, setToastIds] = useState({
         error: null,
         warn: null,
@@ -37,25 +38,26 @@ function LinkSubmitter() {
     }
 
     const handleSubmit = async () => {
-        // Se o link está vazio e o aviso não foi mostrado recentemente:
+        if (isLoading) return; // Se estiver carregando, saia
+
         if (!link.trim()) {
             if (!toast.isActive(toastIds.warn)) {
                 const id = toast.warn("Por favor, insira um link.");
                 setToastIds(prev => ({ ...prev, warn: id }));
             }
-            return; // Pare a execução aqui para não enviar os dados.
+            return;
         }
 
-        // Se o link não contém 'qrcode' e o aviso não foi mostrado recentemente:
         if (!containsQrCode(link)) {
             if (!toast.isActive(toastIds.warn)) {
                 const id = toast.warn("O link inserido não é válido.");
                 setToastIds(prev => ({ ...prev, warn: id }));
             }
-            return; // Pare a execução aqui para não enviar os dados.
+            return;
         }
 
-        // Se chegou aqui, tente enviar os dados:
+        setIsLoading(true); // Defina o estado de carregamento como true
+
         try {
             const response = await fetch('https://api.dotnery.com/QrCode/send', {
                 method: 'POST',
@@ -78,6 +80,8 @@ function LinkSubmitter() {
                 const id = toast.error("Erro ao enviar os dados: " + error.message);
                 setToastIds(prev => ({ ...prev, error: id }));
             }
+        } finally {
+            setIsLoading(false); // Defina o estado de carregamento como false, independentemente de sucesso ou falha
         }
     };
 
@@ -114,8 +118,12 @@ function LinkSubmitter() {
                     </button>
                 </div>
                 <div className="col-6">
-                    <button className="link-button btn btn-outline-primary w-100" onClick={handleSubmit}>
-                        Enviar
+                    <button 
+                        className="link-button btn btn-outline-primary w-100" 
+                        onClick={handleSubmit}
+                        disabled={isLoading} // Desative o botão durante o carregamento
+                    >
+                        {isLoading ? 'Enviando...' : 'Enviar'}
                     </button>
                 </div>
             </div>
