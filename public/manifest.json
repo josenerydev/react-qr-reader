@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Link QR NFC-e",
+  "name": "Link QR NFC-e Share",
   "icons": [
     {
       "src": "favicon.ico",
