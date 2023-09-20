@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaste } from '@fortawesome/free-solid-svg-icons';
+import { faPaste, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -81,19 +81,43 @@ function LinkSubmitter() {
         }
     };
 
+    const clearInput = () => {
+        setLink('');
+    }
+
     return (
-        <div className="link-wrapper">
-            <input
-                type="text"
-                placeholder="Cole o link aqui"
-                value={link}
-                onChange={e => setLink(e.target.value)}
-            />
-            <div className="button-group">
-                <button className="paste-button" onClick={handlePaste}>
-                    <FontAwesomeIcon icon={faPaste} /> Colar
-                </button>
-                <button className="link-button" onClick={handleSubmit}>Enviar</button>
+        <div className="link-wrapper container">
+            <div className="row">
+                <div className="col-12">
+                    <div className="input-group mb-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Cole o link aqui"
+                            value={link}
+                            onChange={e => setLink(e.target.value)}
+                        />
+                        {link && (
+                            <div className="input-group-append">
+                                <span className="input-group-text" onClick={clearInput}>
+                                    <FontAwesomeIcon icon={faTimes} />
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-6 mb-2">
+                    <button className="paste-button btn btn-outline-secondary w-100" onClick={handlePaste}>
+                        <FontAwesomeIcon icon={faPaste} /> Colar
+                    </button>
+                </div>
+                <div className="col-6">
+                    <button className="link-button btn btn-outline-primary w-100" onClick={handleSubmit}>
+                        Enviar
+                    </button>
+                </div>
             </div>
             <ToastContainer position="top-right" autoClose={5000} />
         </div>
