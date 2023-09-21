@@ -46,14 +46,20 @@ function App() {
 
     if (profile) {
         return (
-            // Aqui é onde a sua tela original vai ser renderizada.
-            <LinkSubmitter />
+            <div className="App">
+                <header className="App-header">
+                    <h1>Envie o link do QR Code NFC-e</h1>
+                    <LinkSubmitter />
+                </header>
+            </div>
         );
     } else {
         return (
-            <div>
+            <div className="login-container">
                 <h2>React Google Login</h2>
-                <button onClick={() => login()}>Sign in with Google 🚀 </button>
+                <button onClick={() => login()} className="login-button">
+                    Sign in with Google 🚀
+                </button>
             </div>
         );
     }
