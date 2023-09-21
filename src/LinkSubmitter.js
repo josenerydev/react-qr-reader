@@ -1,3 +1,5 @@
+// src\LinkSubmitter.js
+
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaste, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -59,7 +61,7 @@ function LinkSubmitter() {
         setIsLoading(true); // Defina o estado de carregamento como true
 
         try {
-            const response = await fetch('https://api.dotnery.com/QrCode/send', {
+            const response = await fetch(process.env.REACT_APP_API_URL + '/QrCode/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
