@@ -1,4 +1,3 @@
-// src\App.js
 import React, { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -14,14 +13,12 @@ function App() {
     const [profile, setProfile] = useState(null);
 
     const login = useGoogleLogin({
-
         onSuccess: (codeResponse) => setUser(codeResponse),
         onError: (error) => console.log('Login Failed:', error)
     });
 
     useEffect(() => {
         if (user) {
-            // Validar o token com o Google
             axios
                 .get(`https://www.googleapis.com/oauth2/v3/userinfo?id_token=${user.access_token}`, {
                     headers: {
@@ -31,8 +28,8 @@ function App() {
                 })
                 .then((res) => {
                     setProfile(res.data);
-                    // Enviar o token ao nosso backend
-                    return axios.post(process.env.REACT_APP_API_URL + '/authenticate', { token: user.access_token });
+                    localStorage.setItem('userProfile', JSON.stringify(res.data));
+                    return axios.post(`${process.env.REACT_APP_API_URL}/authenticate`, { token: user.access_token });
                 })
                 .then((backendResponse) => {
                     localStorage.setItem('authToken', backendResponse.data.token);
@@ -42,16 +39,35 @@ function App() {
     }, [user]);
 
     useEffect(() => {
-        // Função para impedir o comportamento padrão de rolagem
         const preventDefaultScroll = (e) => e.preventDefault();
-
-        // Adicionar o ouvinte de evento ao corpo do documento
         document.body.addEventListener('touchmove', preventDefaultScroll, { passive: false });
 
-        // Remover o ouvinte de evento quando o componente for desmontado
         return () => {
             document.body.removeEventListener('touchmove', preventDefaultScroll);
         };
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        console.info("Token:", token);
+        const storedUserProfile = localStorage.getItem('userProfile');
+        console.info("Stored User Profile:", localStorage.getItem('userProfile'));
+        if (token && storedUserProfile) {
+            axios.post(`${process.env.REACT_APP_API_URL}/Authenticate/verifyToken`, { token })
+                .then((response) => {
+                    if (response.data.isValid) {
+                        setProfile(JSON.parse(storedUserProfile));
+                    } else {
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('userProfile');
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userProfile');
+                });
+        }
     }, []);
 
     if (profile) {

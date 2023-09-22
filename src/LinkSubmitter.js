@@ -61,10 +61,12 @@ function LinkSubmitter() {
         setIsLoading(true); // Defina o estado de carregamento como true
 
         try {
+            const token = localStorage.getItem('authToken');
             const response = await fetch(process.env.REACT_APP_API_URL + '/QrCode/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Incluir o token no cabeçalho da requisição
                 },
                 body: JSON.stringify({ link: link })
             });
