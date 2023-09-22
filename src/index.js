@@ -1,4 +1,4 @@
-// react-qr-reader\src\index.js
+// src\index.js
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';

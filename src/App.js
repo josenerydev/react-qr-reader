@@ -1,3 +1,5 @@
+// src\App.js
+
 import React, { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -5,9 +7,16 @@ import axios from 'axios';
 import LinkSubmitter from './LinkSubmitter';
 
 function App() {
+    useEffect(() => {
+        console.log("Componente App montado");
+    }, []);
 
-    console.log("API URL:", process.env.REACT_APP_API_URL);
-    console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
+
+    useEffect(() => {
+        console.log("API URL:", process.env.REACT_APP_API_URL);
+        console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
+    }, []);
+
 
     const [user, setUser] = useState(null);
     const [profile, setProfile] = useState(null);
@@ -53,19 +62,26 @@ function App() {
         const storedUserProfile = localStorage.getItem('userProfile');
         console.info("Stored User Profile:", localStorage.getItem('userProfile'));
         if (token && storedUserProfile) {
-            axios.post(`${process.env.REACT_APP_API_URL}/Authenticate/verifyToken`, { token })
+            axios.post(`${process.env.REACT_APP_API_URL}/Authenticate/verifyToken`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then((response) => {
+                    console.info("Response:", response);
                     if (response.data.isValid) {
                         setProfile(JSON.parse(storedUserProfile));
                     } else {
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('userProfile');
+                        setProfile(null);
                     }
                 })
                 .catch((err) => {
                     console.log(err);
                     localStorage.removeItem('authToken');
                     localStorage.removeItem('userProfile');
+                    setProfile(null);
                 });
         }
     }, []);
