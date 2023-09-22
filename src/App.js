@@ -1,5 +1,4 @@
-// react-qr-reader\src\App.js
-
+// src\App.js
 import React, { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -15,14 +14,14 @@ function App() {
     const [profile, setProfile] = useState(null);
 
     const login = useGoogleLogin({
-        
+
         onSuccess: (codeResponse) => setUser(codeResponse),
         onError: (error) => console.log('Login Failed:', error)
     });
 
     useEffect(() => {
         if (user) {
-            // Primeiro, vamos validar o token com o Google
+            // Validar o token com o Google
             axios
                 .get(`https://www.googleapis.com/oauth2/v3/userinfo?id_token=${user.access_token}`, {
                     headers: {
@@ -32,34 +31,46 @@ function App() {
                 })
                 .then((res) => {
                     setProfile(res.data);
-                    // Aqui, após validação bem-sucedida com o Google, enviaremos o token ao nosso backend
-                    console.log("User:", user);
+                    // Enviar o token ao nosso backend
                     return axios.post(process.env.REACT_APP_API_URL + '/authenticate', { token: user.access_token });
                 })
                 .then((backendResponse) => {
-                    // Lide com a resposta do backend (por exemplo, salvar o token JWT em local storage se for o caso)
                     localStorage.setItem('authToken', backendResponse.data.token);
                 })
                 .catch((err) => console.log(err));
         }
     }, [user]);
 
+    useEffect(() => {
+        // Função para impedir o comportamento padrão de rolagem
+        const preventDefaultScroll = (e) => e.preventDefault();
+
+        // Adicionar o ouvinte de evento ao corpo do documento
+        document.body.addEventListener('touchmove', preventDefaultScroll, { passive: false });
+
+        // Remover o ouvinte de evento quando o componente for desmontado
+        return () => {
+            document.body.removeEventListener('touchmove', preventDefaultScroll);
+        };
+    }, []);
+
     if (profile) {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <h1>Envie o link do QR Code NFC-e</h1>
+            <div className="d-flex flex-column vh-100 bg-light m-0 p-0">
+                <header className="bg-dark text-white">
                     <LinkSubmitter />
                 </header>
             </div>
         );
     } else {
         return (
-            <div className="login-container">
-                <h2>React Google Login</h2>
-                <button onClick={() => login()} className="login-button">
-                    Sign in with Google 🚀
-                </button>
+            <div className="d-flex align-items-center justify-content-center vh-100 bg-light m-0 p-0">
+                <div className="text-center p-3">
+                    <h2 className="mb-3 h4">Link QR NFC-e Share</h2>
+                    <button onClick={() => login()} className="btn btn-primary btn-lg">
+                        Sign in with Google 🚀
+                    </button>
+                </div>
             </div>
         );
     }

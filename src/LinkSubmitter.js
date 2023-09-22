@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaste, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPaste, faTimes, faLink } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -92,44 +92,54 @@ function LinkSubmitter() {
     }
 
     return (
-        <div className="link-wrapper container">
-            <div className="row">
-                <div className="col-12">
-                    <div className="input-group mb-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Cole o link aqui"
-                            value={link}
-                            onChange={e => setLink(e.target.value)}
-                        />
-                        {link && (
-                            <div className="input-group-append">
-                                <span className="input-group-text" onClick={clearInput}>
-                                    <FontAwesomeIcon icon={faTimes} />
-                                </span>
+        <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+            <div className="card shadow p-3 bg-white rounded m-3">
+                <div className="card-body">
+                    <h1 className="card-title h4 mb-4 text-dark text-center font-weight-bold">
+                        <FontAwesomeIcon icon={faLink} className="mr-2" />
+                        Envie o link do QR Code NFC-e
+                    </h1>
+                    <div className="container-fluid">
+                        <div className="row mb-3">
+                            <div className="col-12 px-2">
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        className="form-control form-control-lg"
+                                        placeholder="Cole o link aqui"
+                                        value={link}
+                                        onChange={e => setLink(e.target.value)}
+                                    />
+                                    {link && (
+                                        <div className="input-group-append">
+                                            <span className="input-group-text" onClick={clearInput}>
+                                                <FontAwesomeIcon icon={faTimes} />
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        )}
+                        </div>
+                        <div className="row">
+                            <div className="col-12 col-md-6 mb-2 px-2">
+                                <button className="paste-button btn btn-outline-secondary btn-lg btn-block" onClick={handlePaste}>
+                                    <FontAwesomeIcon icon={faPaste} /> Colar
+                                </button>
+                            </div>
+                            <div className="col-12 col-md-6 px-2">
+                                <button
+                                    className="link-button btn btn-outline-primary btn-lg btn-block"
+                                    onClick={handleSubmit}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Enviando...' : 'Enviar'}
+                                </button>
+                            </div>
+                        </div>
+                        <ToastContainer position="top-right" autoClose={5000} />
                     </div>
                 </div>
             </div>
-            <div className="row">
-                <div className="col-6 mb-2">
-                    <button className="paste-button btn btn-outline-secondary w-100" onClick={handlePaste}>
-                        <FontAwesomeIcon icon={faPaste} /> Colar
-                    </button>
-                </div>
-                <div className="col-6">
-                    <button 
-                        className="link-button btn btn-outline-primary w-100" 
-                        onClick={handleSubmit}
-                        disabled={isLoading} // Desative o botão durante o carregamento
-                    >
-                        {isLoading ? 'Enviando...' : 'Enviar'}
-                    </button>
-                </div>
-            </div>
-            <ToastContainer position="top-right" autoClose={5000} />
         </div>
     );
 }
