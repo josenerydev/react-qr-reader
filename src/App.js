@@ -1,12 +1,15 @@
-// src\App.js
-
+// src/App.js
 import React, { useState, useEffect } from 'react';
-import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-
+import { useGoogleLogin } from '@react-oauth/google';
 import LinkSubmitter from './LinkSubmitter';
+import LoadingSpinner from './LoadingSpinner';
 
 function App() {
+    const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const [profile, setProfile] = useState(null);
+
     useEffect(() => {
         console.log("Componente App montado");
     }, []);
@@ -16,10 +19,6 @@ function App() {
         console.log("API URL:", process.env.REACT_APP_API_URL);
         console.log("Google Client ID:", process.env.REACT_APP_GOOGLE_CLIENT_ID);
     }, []);
-
-
-    const [user, setUser] = useState(null);
-    const [profile, setProfile] = useState(null);
 
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
@@ -58,9 +57,7 @@ function App() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.info("Token:", token);
         const storedUserProfile = localStorage.getItem('userProfile');
-        console.info("Stored User Profile:", localStorage.getItem('userProfile'));
         if (token && storedUserProfile) {
             axios.post(`${process.env.REACT_APP_API_URL}/Authenticate/verifyToken`, {}, {
                 headers: {
@@ -68,23 +65,29 @@ function App() {
                 }
             })
                 .then((response) => {
-                    console.info("Response:", response);
                     if (response.data.isValid) {
                         setProfile(JSON.parse(storedUserProfile));
                     } else {
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('userProfile');
-                        setProfile(null);
                     }
                 })
                 .catch((err) => {
                     console.log(err);
                     localStorage.removeItem('authToken');
                     localStorage.removeItem('userProfile');
-                    setProfile(null);
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
+        } else {
+            setIsLoading(false);
         }
     }, []);
+
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
 
     if (profile) {
         return (
